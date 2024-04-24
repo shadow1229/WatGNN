@@ -70,6 +70,9 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 outf_name = '%s/%s_%s_pred.pdb'%(result_pdb_dir,pdb_name,pdbpath_chain[1])
             if os.access(outf_name,0):
                 continue
+                
+            if dataset_lig[trgidx] == None:
+                is_ligand = None
             
             read_time_start = time.time()
             if is_ligand:
@@ -123,7 +126,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 
                 if n_try >= max_n_try:
                     raise ValueError             
-                """
+                
                 #try:               
                 #    pred_list[k], loss,metric = model.forward(pdb_dict, pdb_path=pdb_path, chain=pdbpath_chain[1], save_input=debug) # currently, metric = (loss_0, loss_1)
                 #except Exception as e:

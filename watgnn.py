@@ -23,49 +23,12 @@ from watgnn_input_preprocess import transform, merge_pdb_dicts, get_probe
 from watgnn_input import read_paths,read_pdb_old, read_dataset, read_dataset_simple, read_pdbbind_simple
 from watgnn_models import Model
 from watgnn_evaluation import eval_dataset
+from watgnn_config import config
 #=============================================================================
  
-def main(mode='train'): #pred_per_atom -> n_grid
+def main(mode='train',dataset_path=None): #pred_per_atom -> n_grid
     MAX_NORM = 1.0 #for gradient clipping
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    #device = 'cpu'
-    config = {
-             'channels_div': 2, 
-             'fiber_edge': [(0, 3)], #intra-residue edge + polar-polar edge with 10A cutoff + 3 classification - bond / intra / long-range(or polar-polar)             
-             'fiber_hidden': [(0, 64), (1, 64), (2, 64)], 
-             'fiber_init': [(0, 16)],
-             'fiber_init_pass': [(0, 16)], #fiber-1 was removed due to fiber-1 in the input node feature is removed and initialization model does no interaction with edge, so no fiber-1 could exist in the output of initialization model 
-                                           #(this will replace fiber_pass in the output of initialization model and input of interaction model in the ablation model)   
-             'fiber_out': [(0, 2 ), (1, 2)], 
-             'fiber_pass': [(0, 64), (1, 32)], 
-             'fiber_struct': [(0, 64), (1, 32)], 
-             'mid_dim':32,
-             'loss_weight': {'n_water': 1.0, 'pos_RMSE': 1.0},  
-             'lr':0.001,   
-             'low_memory': True, 
-             'nonlinearity': 'elu', 
-             'norm': [True, True], 
-             'num_graph_layers': 6,  #6->10
-             'num_heads': 8, 
-             'num_linear_layers': 6, 
-             'clust_radius':2.0, #for clustering in predicted points
-             'grid_start':-4.5,  #start point of grid (-4.5A from atom crd)
-             'interval':4.5,     #grid interval 
-             'water_cutoff':4.5,
-             #'score_cutoff':0.5,
-             'score_cutoff':0.0001,
-             'n_grid':2,         #maximum number of grid 
-             'device':device,
-             'shuffle':True, #enables shuffle for training 
-             'crop': True,   #enables cropping for training 
-             'crop_radius':15.0, #crop sphere radius 
-             'random_rotation':True,#enables random rotation for training
-             'n_batch':4, 
-             'state_dict_dir':'./network',  
-
-             'debug':False,
-             'log_dir':'gnn_log'
-    }
+    device = config['device']
     log_dir = config['log_dir']
     if not os.access(log_dir,0):
         os.mkdir(log_dir)
@@ -85,68 +48,32 @@ def main(mode='train'): #pred_per_atom -> n_grid
 
     water_cutoff = config['water_cutoff']
     state_dict_dir = config['state_dict_dir']
+
+    #for training (dummy variable)
+    trainset = []
+    trainset_lig = None
+    trainset_eval =[] 
+    trainset_eval_lig = None
+    testset = []
+    testset_lig = None
+        
+    dataset     = []
+    dataset_lig = []
+    dataset_f = open(dataset_path,'r')
+    dataset_lines = dataset_f.readlines()
     
+    for line in dataset_lines:
+        if line.startswith('#'):
+            continue
+        lsp = line.strip().split()
+        if len(lsp) == 1:
+            dataset.append(lsp[0])
+            dataset_lig.append(None)
+        elif len(lsp) == 2:
+            dataset.append(lsp[0])
+            dataset_lig.append(lsp[1])
 
-    """
-    #WatGNN training / validation set    
-    direc = './pdb_new'
-    lig_direc = None
-    trainpath = 'train.txt'
-    testpath = 'test.txt'
 
-    #single protein set
-    #direc = './wkgb_targets/ref' #contains water, and GWGNN treats water as answer positions.
-    #lig_direc = None
-    #trainpath = None
-    #testpath = 'wkgb_targets.txt'
-
-    if trainpath == None:
-        trainset = []
-        trainset_lig = None
-        trainset_eval = []
-        trainset_eval_lig = None
-    else:
-        trainset = read_dataset_simple(trainpath, direc = direc, suffix = '.pdb', n_max_trg=None) #read all # list of ((pdbpath,chain)), where chain is not None if specific chain is used only.
-        trainset_lig = None    
-        trainset_eval = read_dataset_simple(trainpath, direc = direc,suffix = '.pdb',n_max_trg=None)
-        trainset_eval_lig = None 
-
-    if testpath == None:
-        testset = []
-        testset_lig = None
-    else:        
-        testset = read_dataset_simple(testpath, direc = direc,suffix = '.pdb',n_max_trg=None) #read first 300 trgs
-        testset_lig = None
-    """
-    #==================================================================
-    
-    #pdbbind set
-    
-    direc = './pdbbind/refined-set' #contains water, and GWGNN treats water as answer positions.
-    trainpath = 'train_pdbbind.txt'
-    testpath = 'test_pdbbind.txt'
-
-    if trainpath == None:
-        trainset = []
-        trainset_lig = []
-        trainset_eval = []
-        trainset_eval_lig = []
-
-    else:
-        trainset, trainset_lig = read_pdbbind_simple(trainpath, direc = direc, n_max_trg=None) #read all # list of ((pdbpath,chain)), where chain is not None if specific chain is used only.
-        trainset_eval, trainset_eval_lig = read_pdbbind_simple(trainpath, direc = direc,n_max_trg=None)
-
-    if testpath == None:
-        testset = []
-        testset_lig = []
-    else:        
-        testset, testset_lig = read_pdbbind_simple(testpath, direc = direc,n_max_trg=None) #read first 300 trgs
-    
-    
-
-    total_set = []
-    total_set.extend(trainset)
-    total_set.extend(testset)
 
     gwgnn_dir = os.path.dirname(__file__)
     curr_dir = os.getcwd()
@@ -282,11 +209,13 @@ def main(mode='train'): #pred_per_atom -> n_grid
             scheduler.step()
 
     elif mode == 'eval':
-        if len(trainset_eval) > 0:
-            eval_dataset(model, trainset_eval, trainset_eval_lig, config, log_dir = 'gnn_log', log_path = 'gnn_train_epoch%05d.txt'%(start_epoch+1), result_pdb_dir = 'gnn_result_ablation',label='train' )
-        if len(testset) > 0:
-            eval_dataset(model, testset, testset_lig, config, log_dir = 'gnn_log', log_path = 'gnn_eval_epoch%05d.txt'%(start_epoch+1), result_pdb_dir = 'gnn_result_ablation',label='validation' )
+        if len(dataset) > 0:
+            eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_path = 'gnn_train_epoch%05d.txt'%(start_epoch+1), result_pdb_dir = 'gnn_result',label='train' )
 
-
-#main(mode = 'train')
-main(mode = 'eval')
+if __name__ == "__main__":
+    if len(sys.argv) <= 1:
+        print("usage: watgnn.py [dataset file path]")
+        print("dataset file structure: [pdb file path (relative path)] [mol2 file path (relative path, optional)] ")
+    else:
+        dataset_path = sys.argv[1] 
+        main(mode = 'eval', dataset_path=dataset_path)

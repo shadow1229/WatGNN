@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "watgnn"
+version = "0.1.0"
+description = "Water site prediction method using SE(3)-Graph Neural Network"
+authors = ["shadow1229 <shadow1229@snu.ac.kr>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.group.dev.dependencies]
+se3-transformer = {git = "https://github.com/shadow1229/SE3Transformer"}
+numpy = "^1.26.4"
+dgl = "^2.1.0"
+scipy = "^1.13.0"
+torch = "^2.2.2"
+psutil = "^5.9.8"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
