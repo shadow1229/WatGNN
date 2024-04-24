@@ -14,8 +14,6 @@ watgnn = "watgnn.watgnn:main"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-
-[tool.poetry.group.dev.dependencies]
 se3-transformer = {git = "https://github.com/shadow1229/SE3Transformer"}
 numpy = "^1.26.4"
 dgl = ">=0.9"
