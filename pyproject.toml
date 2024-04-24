@@ -12,10 +12,11 @@ python = "^3.9"
 [tool.poetry.group.dev.dependencies]
 se3-transformer = {git = "https://github.com/shadow1229/SE3Transformer"}
 numpy = "^1.26.4"
-dgl = "^2.1.0"
+dgl = ">=0.9"
 scipy = "^1.13.0"
 torch = "^2.2.2"
 psutil = "^5.9.8"
+e3nn = "^0.5"
 
 [build-system]
 requires = ["poetry-core"]
