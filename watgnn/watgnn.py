@@ -26,7 +26,7 @@ from watgnn_evaluation import eval_dataset
 from watgnn_config import config
 #=============================================================================
  
-def main(mode='train',dataset_path=None): #pred_per_atom -> n_grid
+def runner(mode='train',dataset_path=None): #pred_per_atom -> n_grid
     MAX_NORM = 1.0 #for gradient clipping
     device = config['device']
     log_dir = config['log_dir']
@@ -212,10 +212,13 @@ def main(mode='train',dataset_path=None): #pred_per_atom -> n_grid
         if len(dataset) > 0:
             eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_path = 'gnn_train_epoch%05d.txt'%(start_epoch+1), result_pdb_dir = 'gnn_result',label='train' )
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) <= 1:
         print("usage: watgnn.py [dataset file path]")
         print("dataset file structure: [pdb file path (relative path)] [mol2 file path (relative path, optional)] ")
     else:
         dataset_path = sys.argv[1] 
-        main(mode = 'eval', dataset_path=dataset_path)
+        runner(mode = 'eval', dataset_path=dataset_path)
+        
+if __name__ == "__main__":
+    main()
