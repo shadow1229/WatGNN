@@ -32,7 +32,7 @@ example:
 ```
 
 ## Dataset used in the preprint
-[check here] (https://github.com/shadow1229/WatGNN/tree/main/watgnn/Dataset)
+[check here](https://github.com/shadow1229/WatGNN/tree/main/watgnn/Dataset)
 
 ## Reference
 Sangwoo Park, "Water position prediction with SE(3)-Graph Neural Network", _bioRxiv_ (**2024**). [Link](https://www.biorxiv.org/content/10.1101/2024.03.25.586555v1)
