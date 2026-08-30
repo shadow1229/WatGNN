@@ -1,4 +1,4 @@
-import os, glob, time,copy,random
+import os, sys, glob, time,copy,random
 import numpy as np
 
 from torch import nn,optim
@@ -20,7 +20,7 @@ from se3_transformer.layers import LinearSE3, NormSE3
 from watgnn_features import bond_dict, polar_vec_dict, aux_vec_dict, charge_dict, hyb_dict 
 from watgnn_visualization import pdb_dict_as_pdb, pdb_dict_as_pdb_new
 from watgnn_input_preprocess import transform, merge_pdb_dicts, get_probe
-from watgnn_input import read_paths,read_pdb_old, read_dataset, read_dataset_simple, read_pdbbind_simple
+from watgnn_input import read_paths, read_dataset, read_dataset_simple, read_pdbbind_simple
 from watgnn_models import Model
 from watgnn_evaluation import eval_dataset
 from watgnn_config import config

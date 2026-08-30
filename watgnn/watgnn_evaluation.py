@@ -8,7 +8,7 @@ import dgl
 from scipy.spatial.distance import cdist
 
 from watgnn_input_preprocess import transform, merge_pdb_dicts, get_probe, partition_pdb_dict
-from watgnn_input import read_paths,read_pdb_old,read_dataset, read_dataset_simple
+from watgnn_input import read_paths, read_dataset, read_dataset_simple
 
 
 def mem():
@@ -114,7 +114,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 #due to VRAM allocation problem - cannot allocate memory
                 while (done == False and n_try < max_n_try):
                     try:
-                        pred_list[k], loss,metric = model.forward(pdb_dict, pdb_path=pdb_path, chain=pdbpath_chain[1], save_input=debug)) # currently, metric = (loss_0, loss_1)
+                        pred_list[k], loss,metric = model.forward(pdb_dict, pdb_path=pdb_path, chain=pdbpath_chain[1], save_input=debug) # currently, metric = (loss_0, loss_1)
                         done = True
                     except Exception as e:
                         n_try += 1
