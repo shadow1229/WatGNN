@@ -67,10 +67,10 @@ def runner(mode='train',dataset_path=None): #pred_per_atom -> n_grid
             continue
         lsp = line.strip().split()
         if len(lsp) == 1:
-            dataset.append(lsp[0])
+            dataset.append([lsp[0],None])
             dataset_lig.append(None)
         elif len(lsp) == 2:
-            dataset.append(lsp[0])
+            dataset.append([lsp[0],None])
             dataset_lig.append(lsp[1])
 
 
