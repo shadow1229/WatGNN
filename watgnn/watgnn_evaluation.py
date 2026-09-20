@@ -224,6 +224,17 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 pred_filt, pred_n_filt = zip(*pred_filt_pos_n_sort)
                 print('pred_sort', mem())
 
+                #removing predicted sites that clash with atoms from the input molecule
+                input_pos_np = pdb_dict['pos_list'].numpy()
+                pred_filt_np = np.array(pred_filt)
+                pred_n_filt_np = np.array(pred_n_filt)
+                
+                dist0 = cdist(input_pos_np, np.array(pred_filt))
+                mindist = [ np.amin(dist0[:,j]) for j in range(len(water_pos))] 
+                no_clash_mask = ( mindist > config['clust_radius'])
+                pred_n_filt = pred_n_filt_np[no_clash_mask]
+                pred_filt = pred_filt_np[no_clash_mask]
+
                 #clustering
                 pred_filt_torch = torch.from_numpy(np.array(pred_filt))
                 n_max_water = min(pred_filt_torch.shape[0], 30000) 
