@@ -1,0 +1,28 @@
+.comment a1 = d-hat; reddish purple (Okabe-Ito palette)
+.color 0.800 0.475 0.655
+.transparency 0.0
+.arrow   50.357    4.766   39.150   50.614    5.796   37.166 0.045 0.140 0.84
+.arrow   52.639    5.920   38.606   52.569    7.293   36.825 0.045 0.140 0.84
+
+.comment a2; bluish green
+.color 0.000 0.620 0.451
+.transparency 0.0
+.arrow   50.357    4.766   39.150   48.122    4.909   38.934 0.045 0.140 0.84
+.arrow   52.639    5.920   38.606   54.564    6.878   39.269 0.045 0.140 0.84
+
+.comment a3 = a1 cross a2; vermillion
+.color 0.835 0.369 0.000
+.transparency 0.0
+.arrow   50.357    4.766   39.150   50.385    6.762   40.189 0.045 0.140 0.84
+.arrow   52.639    5.920   38.606   53.802    4.417   37.402 0.045 0.140 0.84
+
+.comment c-hat from residue centroid to backbone N; auxiliary vector, visually subordinate
+.color 0.50 0.50 0.50
+.transparency 0.0
+.arrow   51.783    4.605   39.421   50.357    4.766   39.150 0.025 0.20 0.7
+.arrow   51.783    4.605   39.421   52.639    5.920   38.606 0.025 0.20 0.7
+
+.comment Thin guide from polar-base position (mean of bonded heavy atoms) to N
+.color 0.500 0.500 0.500
+.transparency 0.0
+.cylinder 50.281 4.464 39.732 50.357 4.766 39.150 0.018

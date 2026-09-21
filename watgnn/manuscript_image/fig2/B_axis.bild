@@ -1,0 +1,14 @@
+.comment a1 = d-hat; reddish purple (Okabe-Ito palette)
+.color 0.800 0.475 0.655
+.transparency 0.0
+.arrow   50.357    4.766   39.150   50.614    5.796   37.166 0.045 0.140 0.84
+
+.comment a2; bluish green
+.color 0.000 0.620 0.451
+.transparency 0.0
+.arrow   50.357    4.766   39.150   48.122    4.909   38.934 0.045 0.140 0.84
+
+.comment a3 = a1 cross a2; vermillion
+.color 0.835 0.369 0.000
+.transparency 0.0
+.arrow   50.357    4.766   39.150   50.385    6.762   40.189 0.045 0.140 0.84

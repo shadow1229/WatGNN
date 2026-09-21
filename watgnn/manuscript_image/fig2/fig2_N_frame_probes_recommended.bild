@@ -1,0 +1,44 @@
+.comment Figure 2 draft: Ala backbone-N local frame and four probe positions
+.comment Load with x.pdb; hide x.pdb_probe.pdb to avoid duplicate probe spheres.
+.comment Add mathematical labels and distance annotations as 2D labels after fixing the view.
+
+.comment a1 = d-hat; reddish purple (Okabe-Ito palette)
+.color 0.800 0.475 0.655
+.transparency 0.0
+.arrow 50.357 4.766 39.150 50.614 5.796 37.166 0.045 0.140 0.84
+
+.comment a2; bluish green
+.color 0.000 0.620 0.451
+.transparency 0.0
+.arrow 50.357 4.766 39.150 48.122 4.909 38.934 0.045 0.140 0.84
+
+.comment a3 = a1 cross a2; vermillion
+.color 0.835 0.369 0.000
+.transparency 0.0
+.arrow 50.357 4.766 39.150 50.385 6.762 40.189 0.045 0.140 0.84
+
+.comment c-hat from residue centroid to backbone N; auxiliary vector, visually subordinate
+.color 0.250 0.250 0.250
+.transparency 0.0
+.arrow 51.783 4.605 39.421 50.357 4.766 39.150 0.025 0.080 0.86
+
+.comment Thin guide from polar-base position (mean of bonded heavy atoms) to N
+.color 0.500 0.500 0.500
+.transparency 0.0
+.cylinder 50.281 4.464 39.732 50.357 4.766 39.150 0.018
+
+.comment Probe-face outline. Adjacent probe spacing is 4.50 A.
+.color 0.700 0.700 0.700
+.transparency 0.0
+.cylinder 52.822 3.657 36.342 52.877 7.648 38.421 0.025
+.cylinder 52.877 7.648 38.421 48.407 7.934 37.990 0.025
+.cylinder 48.407 7.934 37.990 48.351 3.943 35.911 0.025
+.cylinder 48.351 3.943 35.911 52.822 3.657 36.342 0.025
+
+.comment Four probe positions; medium gray for contrast on a white background
+.color 0.400 0.400 0.400
+.transparency 0.0
+.sphere 52.822 3.657 36.342 0.250
+.sphere 52.877 7.648 38.421 0.250
+.sphere 48.351 3.943 35.911 0.250
+.sphere 48.407 7.934 37.990 0.250
