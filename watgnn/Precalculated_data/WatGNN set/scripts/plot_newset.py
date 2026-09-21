@@ -140,11 +140,11 @@ for method in method_list:
         if ylabel == 'RMSD':
             ax.set_ylabel(r'$\mathrm{RMSD}$ $\mathrm{( {\AA } )}$',fontproperties=prop)
         elif ylabel == 'cov_05':
-            ax.set_ylabel(r'$\mathrm{Coverage}$ $\mathrm{({0.5\AA})}$',fontproperties=prop)
+            ax.set_ylabel(r'$\mathrm{Mean}$ $\mathrm{recall ({0.5 \AA})}$',fontproperties=prop)
         elif ylabel == 'cov_10':
-            ax.set_ylabel(r'$\mathrm{Coverage}$',fontproperties=prop)
+            ax.set_ylabel(r'$\mathrm{Mean}$ $\mathrm{recall ({1.0 \AA})}$',fontproperties=prop)
         elif ylabel == 'cov_15':
-            ax.set_ylabel(r'$\mathrm{Coverage}$ $\mathrm{({1.5\AA})}$',fontproperties=prop)
+            ax.set_ylabel(r'$\mathrm{Mean}$ $\mathrm{recall ({1.5 \AA})}$',fontproperties=prop)
         else:
             ax.set_ylabel(r'$\mathrm{%s}$'%ylabel,fontproperties=prop)
         ax.set_xticks(range(11))
