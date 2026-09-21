@@ -12,8 +12,8 @@ def read_dat(fpath):
         if line.startswith('#'):
             continue
         lsp = line.split()
-        x = { 'n_cryst':int(lsp[0]),
-              'n'    :int(lsp[1]),
+        x = { 'n_cryst':float(lsp[0]),
+              'n'    :float(lsp[1]),
               'scorecut':0.01*float(lsp[2]),
               'RMSD' :float(lsp[4]),
               'acc_05':float(lsp[7]),
@@ -34,7 +34,7 @@ def read_dat(fpath):
         if item['n'] > N_pred:
             continue
 
-        x = { 'n'    :float(item['n'])/ float(N_cryst),
+        x = { 'n'    :float(item['n'])/ float(item['n_cryst']),
               'scorecut':item['scorecut'],
               'RMSD' :item['RMSD'],
               'acc_05':item['acc_05'],
@@ -72,14 +72,14 @@ cut_dict = {    'acccov_05' : 0.5,
                 'f1_10' : 1.0,
                 'f1_15' : 1.5,
             }                
-types_dict = {'native' :'$\mathrm{single}$ $\mathrm{protein}$ $\mathrm{comparison}$ $\mathrm{set}$'}
+types_dict = {'native' :'$\mathrm{protein-compound}$ $\mathrm{comparison}$ $\mathrm{set}$ '}
 
 
-method_dict    ={'GalaxyWater-wKGB':'GalaxyWater-wKGB','3drism':'3D-RISM','FoldX':'FoldX',
+method_dict    ={'GalaxyWater-wKGB':'GalaxyWater-KGB','3drism':'3D-RISM','FoldX':'FoldX',
                  'GalaxyWater-CNN':'GalaxyWater-CNN','WatGNN':'WatGNN'}
-method_list    = ['WatGNN','GalaxyWater-CNN','GalaxyWater-wKGB','3drism','FoldX']
+method_list    = ['WatGNN','GalaxyWater-CNN','3drism']
 method_list_f1    = ['WatGNN']
-color  = ['#000000','#FF0000','#FF8800','#00FF00','#0000FF','#000000','#880088','#008888']
+color  = ['#000000','#FF0000','#00FF00','#000000','#880088','#008888']
 plt.rc('mathtext', fontset='cm')
 #plt.rc('font', **{'family':'sans-serif','sans-serif':['Helvetica']})
 #plt.rc('text',usetex=True)
@@ -108,7 +108,7 @@ for typ in types_dict.keys():
         ax = fig.add_axes([0.14,0.15,0.80,0.74])
         ax.grid(visible=True, axis='both',linestyle='dotted',color='black')
         ax.legend(bbox_to_anchor=(1.00,1.0))
-        title = '%s $\mathrm{(91}$ $\mathrm{structures)}$'%types_dict[typ]
+        title = '%s $\mathrm{(171}$ $\mathrm{structures)}$'%types_dict[typ]
         ax.set_title(r'%s'%title,fontproperties=prop)
 
         if label in ['acccov_05','acccov_10','acccov_15']:
@@ -147,6 +147,7 @@ for typ in types_dict.keys():
             for i, method in enumerate(method_list):
                 dat = dat_dict[method]
                 xlabel, ylabel = labels_dict[label]
+                print("%s %s"%(dat[xlabel] , dat[ylabel]))
                 ax.plot(dat[xlabel] , dat[ylabel],color=color[i] ,marker='o',label=method_dict[method])
 
         plt.savefig('%s.png'%(label))

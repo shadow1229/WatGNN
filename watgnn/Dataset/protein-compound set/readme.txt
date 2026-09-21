@@ -5,4 +5,6 @@ excluded.txt:  27 excluded structures from the actual performance comparison fro
 1) The structure does not have crystallographic water near ligand and cannot be used for current performance comparison metric (23 structures)   
 2) 3D-RISM predicted 0 ligand-neighboring water positions  (4 structures)
 
-pdbbind_clean.txt: total 370 structures, originated from "test_pdbbind_crude.txt" and excluded 27 structured from "excluded.txt". this set was used for the actual performance comparison.
+pdbbind_clean.txt: total 370 structures, originated from "test_pdbbind_crude.txt" and excluded 27 structures from "excluded.txt". 
+
+pdbbind_clean.txt: total 171 structures, originated from "pdbbind_clean.txt" and excluded 199 structures having 30% or higher sequence identity with WatGNN training set. this set was used for the actual performance comparison.
