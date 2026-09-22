@@ -106,7 +106,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
             pred_list = [None for k in range(n_partitions)]
             probe_dict = [ get_probe(pdb_dict) for pdb_dict in pdb_dict_partitioned]
 
-            for k, pdb_dict in enumerate(pdb_dict_partitioned):
+            for k, pdb_dict_partition in enumerate(pdb_dict_partitioned):
 
                 n_try = 0
                 max_n_try=10
@@ -114,7 +114,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 #due to VRAM allocation problem - cannot allocate memory
                 while (done == False and n_try < max_n_try):
                     try:
-                        pred_list[k], loss,metric = model.forward(pdb_dict, pdb_path=pdb_path, chain=pdbpath_chain[1], save_input=debug) # currently, metric = (loss_0, loss_1)
+                        pred_list[k], loss,metric = model.forward(pdb_dict_partition, pdb_path=pdb_path, chain=pdbpath_chain[1], save_input=debug) # currently, metric = (loss_0, loss_1)
                         done = True
                     except Exception as e:
                         n_try += 1
@@ -230,10 +230,11 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 pred_n_filt_np = np.array(pred_n_filt)
                 
                 dist0 = cdist(input_pos_np, np.array(pred_filt))
-                mindist = [ np.amin(dist0[:,j]) for j in range(len(water_pos))] 
+                mindist = dist0.min(axis=0) #fix 260922
                 no_clash_mask = ( mindist > config['clust_radius'])
                 pred_n_filt = pred_n_filt_np[no_clash_mask]
                 pred_filt = pred_filt_np[no_clash_mask]
+                del(dist0)
 
                 #clustering
                 pred_filt_torch = torch.from_numpy(np.array(pred_filt))

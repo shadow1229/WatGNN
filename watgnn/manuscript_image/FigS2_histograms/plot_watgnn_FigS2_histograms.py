@@ -12,13 +12,13 @@ Parse WatGNN histogram text files of the form:
 and generate publication-ready matplotlib figures.
 
 Usage:
-    python plot_watgnn_point3_histograms.py gnn_revision_point3_test.txt
+    python plot_watgnn_point3_histograms.py gnn_point3_test.txt
 
 Outputs:
     - one PNG and one PDF per histogram section
     - a CSV summary of section totals
     - an optional assignment-summary figure for sections containing
-      "(p-w)", "(w-w, no p-w)", and "(no p-w / w-w)"
+      "mindist_pw", "mindist_ww", and "mindist_cw"
 
 Notes:
     * The program uses the supplied "portion" column as the fraction of the
@@ -59,11 +59,11 @@ def parse_histogram_file(path):
                 if m:
                     total_water = int(m.group(1))
 
-            if line.startswith("#histogram:"):
+            if line.startswith("#histogram"):
                 if current is not None:
                     sections.append(current)
                 current = {
-                    "label": line.split(":", 1)[1].strip(),
+                    "label": line.split(":")[0].strip(),
                     "rows": []
                 }
                 continue
@@ -95,27 +95,35 @@ def parse_histogram_file(path):
 
 def short_name(label):
     ll = label.lower()
-    if "ignore h-bond eligibility" in ll:
+    if "mindist_polar" in ll:
         return "all_polar"
-    if "(p-w)" in ll:
+    if "mindist_pw" in ll:
         return "pw_assignable"
-    if "(w-w, no p-w)" in ll:
+    if "mindist_ww" in ll:
         return "ww_assignable"
-    if "(no p-w / w-w)" in ll:
+    if "mindist_cw" in ll:
         return "unassigned_carbon"
+    if "mindist_iw" in ll:
+        return "all_atom"
+    if "mindist_water" in ll:
+        return "inter-water distance"
     return re.sub(r"[^a-z0-9]+", "_", ll).strip("_")[:60]
 
 
 def display_title(label):
     ll = label.lower()
-    if "ignore h-bond eligibility" in ll:
+    if "mindist_polar" in ll:
         return r'$\mathrm{Nearest}$ $\mathrm{polar-atom}$ $\mathrm{distance}$ $\mathrm{for}$ $\mathrm{crystallographic}$ $\mathrm{water}$ $\mathrm{molecules}$'
-    if "(p-w)" in ll:
+    if "mindist_pw" in ll:
         return r'$\mathrm{Protein–water}$ $\mathrm{channel}$ $\mathrm{assignable}$ $\mathrm{crystallographic}$ $\mathrm{water}$ $\mathrm{molecules}$'
-    if "(w-w, no p-w)" in ll:
+    if "mindist_ww" in ll:
         return r'$\mathrm{Water–water}$ $\mathrm{channel}$ $\mathrm{assignable}$ $\mathrm{crystallographic}$ $\mathrm{water}$ $\mathrm{molecules}$'
-    if "(no p-w / w-w)" in ll:
+    if "mindist_cw" in ll:
         return r'$\mathrm{Unassignable}$ $\mathrm{crystallographic}$ $\mathrm{water}$ $\mathrm{molecules}$'
+    if "mindist_iw" in ll:
+        return r'$\mathrm{Nearest}$ $\mathrm{input-atom}$ $\mathrm{distance}$ $\mathrm{for}$ $\mathrm{crystallographic}$ $\mathrm{water}$ $\mathrm{molecules}$'
+    if "mindist_water" in ll:
+        return r'$\mathrm{Nearest}$ $\mathrm{inter-water}$ $\mathrm{distance}$ $\mathrm{for}$ $\mathrm{predicted}$ $\mathrm{water}$ $\mathrm{molecules}$'
     return label
 
 
@@ -146,20 +154,28 @@ def plot_section(section, out_dir, total_water, xmax=None, ymax=None, normalizat
     #ax = fig.add_subplot(111)
     ax = fig.add_axes([0.14,0.15,0.80,0.74])
 
-    if 'ignore h-bond eligibility' in section["label"]:
+    if "mindist_polar" in section["label"]:
         ax.set_xlabel(r'$\mathrm{Minimum}$ $\mathrm{polar}$ $\mathrm{atom}$ $\mathrm{distance}$ $\mathrm{( {\AA } )}$',fontproperties=prop)
         color  = '#888888'
-    elif "(p-w)" in section["label"]:
+    elif "mindist_pw" in section["label"]:
         ax.set_xlabel(r'$\mathrm{Assigned}$ $\mathrm{polar}$ $\mathrm{atom}$ $\mathrm{distance}$ $\mathrm{( {\AA } )}$',fontproperties=prop)
         color  = '#00FF00'        
 
-    elif "(w-w, no p-w)" in section["label"]:
+    elif "mindist_ww" in section["label"]:
         ax.set_xlabel(r'$\mathrm{Assigned}$ $\mathrm{polar}$ $\mathrm{atom}$ $\mathrm{distance}$ $\mathrm{( {\AA } )}$',fontproperties=prop)
         color  = '#FF8800'  
         
-    elif "(no p-w / w-w)" in section["label"]:
+    elif "mindist_cw" in section["label"]:
         ax.set_xlabel(r'$\mathrm{Minimum}$ $\mathrm{carbon}$ $\mathrm{atom}$ $\mathrm{distance}$ $\mathrm{( {\AA } )}$',fontproperties=prop)
         color  = '#FF0000'
+        
+    elif "mindist_iw" in section["label"]:
+        ax.set_xlabel(r'$\mathrm{Minimum}$ $\mathrm{input}$ $\mathrm{atom}$ $\mathrm{distance}$ $\mathrm{( {\AA } )}$',fontproperties=prop)
+        color  = '#888888'
+        
+    elif "mindist_water" in section["label"]:
+        ax.set_xlabel(r'$\mathrm{Minimum}$ $\mathrm{predicted}$ $\mathrm{position}$ $\mathrm{distance}$ $\mathrm{( {\AA } )}$',fontproperties=prop)
+        color  = '#888888'
         
     else:
         ax.set_xlabel(r'$\mathrm{Minimum}$ $\mathrm{polar}$ $\mathrm{atom}$ $\mathrm{distance}$ $\mathrm{( {\AA } )}$',fontproperties=prop)
@@ -198,7 +214,6 @@ def plot_section(section, out_dir, total_water, xmax=None, ymax=None, normalizat
     pdf = out_dir / f"{stem}_{suffix}.pdf"
 
     fig.savefig(png, dpi=600, bbox_inches=None)
-    fig.savefig(pdf, bbox_inches=None)
     plt.close(fig)
 
     return stem, int(df["count"].sum()), float(df["portion"].sum())
@@ -211,11 +226,11 @@ def plot_assignment_summary(total_water, sections, out_dir):
         label = section["label"].lower()
         count = sum(row["count"] for row in section["rows"])
 
-        if "(p-w)" in label:
+        if "mindist_pw" in label:
             selected.append((r'$\mathrm{Protein–water}$ $\mathrm{channel}$', count))
-        elif "(w-w, no p-w)" in label:
+        elif "mindist_ww" in label:
             selected.append((r'$\mathrm{Water–water}$ $\mathrm{channel}$', count))
-        elif "(no p-w / w-w)" in label:
+        elif "mindist_cw" in label:
             selected.append((r'$\mathrm{Unassignable}$', count))
 
     if len(selected) != 3 or not total_water:
@@ -252,7 +267,6 @@ def plot_assignment_summary(total_water, sections, out_dir):
 
     #fig.tight_layout()
     fig.savefig(out_dir / "assignment_summary.png", dpi=600, bbox_inches=None)
-    fig.savefig(out_dir / "assignment_summary.pdf", bbox_inches=None)
     plt.close(fig)
 
 
@@ -278,9 +292,9 @@ def main():
         label = section["label"].lower()
     
         xmax = 6.0
-        if 'ignore h-bond eligibility' in label or "(p-w)" in label:
+        if 'mindist_polar' in label or "mindist_pw" in label:
             ymax = 25.0
-        elif "(no p-w / w-w)" in label or "(w-w, no p-w)" in label:
+        elif "mindist_cw" in label or "mindist_ww" in label:
             ymax = 2.5
         else:
             ymax = 25.0
@@ -302,13 +316,6 @@ def main():
         )
 
     plot_assignment_summary(total_water, sections, out_dir)
-
-    pd.DataFrame(summary).to_csv(out_dir / "histogram_summary.csv", index=False)
-
-    print(f"Total crystallographic waters reported in file: {total_water}")
-    print(pd.DataFrame(summary).to_string(index=False))
-    print(f"\nFigures written to: {out_dir.resolve()}")
-
 
 if __name__ == "__main__":
     main()

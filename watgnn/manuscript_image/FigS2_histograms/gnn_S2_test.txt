@@ -1,5 +1,5 @@
 hydrogen bond examination# of total water molecules in WatGNN training set:       746622
-#histogram: minimum distance between polar atom and water molecule (ignore h-bond eligibility
+#histogram mindist_polar : minimum distance between polar atom and water molecule (ignore h-bond eligibility
  0.00A -  0.10A :            1    0.000
  0.10A -  0.20A :            2    0.000
  0.20A -  0.30A :            3    0.000
@@ -101,7 +101,7 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.80A -  9.90A :            4    0.000
  9.90A - 10.00A :            3    0.000
 10.00A - inf    :          408    0.001
-#histogram: minimum distance between eligible polar atom and water molecule (p-w)
+#histogram mindist_pw : minimum distance between eligible polar atom and water molecule (p-w)
  0.00A -  0.10A :            1    0.000
  0.10A -  0.20A :            0    0.000
  0.20A -  0.30A :            2    0.000
@@ -203,7 +203,7 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.80A -  9.90A :            0    0.000
  9.90A - 10.00A :            0    0.000
 10.00A - inf    :            0    0.000
-#histogram: minimum distance between eligible polar atom and water molecule (w-w, no p-w)
+#histogram mindist_ww : minimum distance between eligible polar atom and water molecule (w-w, no p-w)
  0.00A -  0.10A :            0    0.000
  0.10A -  0.20A :            1    0.000
  0.20A -  0.30A :            0    0.000
@@ -305,7 +305,7 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.80A -  9.90A :            0    0.000
  9.90A - 10.00A :            0    0.000
 10.00A - inf    :            0    0.000
-#histogram: minimum distance between carbon atom and water molecule (no p-w / w-w)
+#histogram mindist_cw : minimum distance between carbon atom and water molecule (no p-w / w-w)
  0.00A -  0.10A :            0    0.000
  0.10A -  0.20A :            0    0.000
  0.20A -  0.30A :            2    0.000

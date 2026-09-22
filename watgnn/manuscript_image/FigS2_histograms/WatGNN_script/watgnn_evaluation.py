@@ -109,7 +109,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
             pred_list = [None for k in range(n_partitions)]
             probe_dict = [ get_probe(pdb_dict) for pdb_dict in pdb_dict_partitioned]
 
-            for k, pdb_dict in enumerate(pdb_dict_partitioned):
+            for k, pdb_dict_partition in enumerate(pdb_dict_partitioned):
 
                 n_try = 0
                 max_n_try=10
@@ -117,7 +117,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 #due to VRAM allocation problem - cannot allocate memory
                 while (done == False and n_try < max_n_try):
                     try:
-                        pred_list[k], loss,metric = model.forward(pdb_dict, pdb_path=pdb_path, chain=pdbpath_chain[1], save_input=debug) # currently, metric = (loss_0, loss_1)
+                        pred_list[k], loss,metric = model.forward(pdb_dict_partition, pdb_path=pdb_path, chain=pdbpath_chain[1], save_input=debug) # currently, metric = (loss_0, loss_1)
                         done = True
                     except Exception as e:
                         n_try += 1
@@ -228,21 +228,17 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 pred_filt, pred_n_filt = zip(*pred_filt_pos_n_sort)
                 print('pred_sort', mem())
                 
-                #removing clash with protein 260916 START
-                #pred_filt
-                input_pos = []
-                input_pos.extend(pdb_dict['protein']['pos_list'])
-                input_pos.extend(pdb_dict['ligand']['pos_list']) 
-                input_pos_np = np.array(input_pos)
+                #removing predicted sites that clash with atoms from the input molecule
+                input_pos_np = pdb_dict['pos_list'].numpy()
                 pred_filt_np = np.array(pred_filt)
                 pred_n_filt_np = np.array(pred_n_filt)
                 
                 dist0 = cdist(input_pos_np, np.array(pred_filt))
-                mindist = [ np.amin(dist0[:,j]) for j in range(len(water_pos))] 
+                mindist = dist0.min(axis=0) #fix 260922
                 no_clash_mask = ( mindist > config['clust_radius'])
                 pred_n_filt = pred_n_filt_np[no_clash_mask]
                 pred_filt = pred_filt_np[no_clash_mask]
-                #removing clash with protein 260916 END
+                del(dist0)
                 
                 #clustering
                 pred_filt_torch = torch.from_numpy(np.array(pred_filt))
@@ -1331,22 +1327,22 @@ def analysis_water_S2(model, dataset, dataset_lig, predset, config, log_dir = 'g
    
         log_f.write('# of total water molecules in WatGNN training set: %12d\n'%N_total)
 
-        log_f.write('#histogram: minimum distance between polar atom and water molecule (ignore h-bond eligibility\n')
+        log_f.write('#histogram mindist_polar : minimum distance between polar atom and water molecule (ignore h-bond eligibility\n')
         for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_histogram[i], N_polar_histogram[i]/N_total ))
         log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_histogram[100], N_polar_histogram[100]/N_total ))
 
-        log_f.write('#histogram: minimum distance between eligible polar atom and water molecule (p-w)\n')
+        log_f.write('#histogram mindist_pw : minimum distance between eligible polar atom and water molecule (p-w)\n')
         for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_elig_pw_histogram[i], N_polar_elig_pw_histogram[i]/N_total ))
         log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_elig_pw_histogram[100], N_polar_elig_pw_histogram[100]/N_total ))
 
-        log_f.write('#histogram: minimum distance between eligible polar atom and water molecule (w-w, no p-w)\n')
+        log_f.write('#histogram mindist_ww : minimum distance between eligible polar atom and water molecule (w-w, no p-w)\n')
         for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_elig_ww_histogram[i], N_polar_elig_ww_histogram[i]/N_total ))
         log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_elig_ww_histogram[100], N_polar_elig_ww_histogram[100]/N_total ))
 
-        log_f.write('#histogram: minimum distance between carbon atom and water molecule (no p-w / w-w)\n')
+        log_f.write('#histogram mindist_cw : minimum distance between carbon atom and water molecule (no p-w / w-w)\n')
         for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_carbon_histogram[i], N_carbon_histogram[i]/N_total ))
         log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_carbon_histogram[100], N_carbon_histogram[100]/N_total ))
@@ -1480,11 +1476,11 @@ def analysis_water_S8(model, dataset, dataset_lig, predset, config, log_dir = 'g
             
             read_time_start = time.time()
             if is_ligand:
-                pdb_dict = read_paths_suppl([pdbpath_chain,dataset_lig[trgidx]],predpath,water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, water_scorecut=water_scorecut ,is_eval=True)
+                pdb_dict = read_paths_revision4([pdbpath_chain,dataset_lig[trgidx]],predpath,water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, water_scorecut=water_scorecut ,is_eval=True)
                 #pdb_dict = read_paths([pdbpath_chain,dataset_lig[trgidx]],water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, is_eval=True) 
 
             else:
-                pdb_dict = read_paths_suppl([pdbpath_chain],predpath,water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, water_scorecut=water_scorecut ,is_eval=True)
+                pdb_dict = read_paths_revision4([pdbpath_chain],predpath,water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, water_scorecut=water_scorecut ,is_eval=True)
                 #pdb_dict = read_paths([pdbpath_chain],water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, is_eval=True) 
 
 
@@ -1536,6 +1532,7 @@ def analysis_water_S8(model, dataset, dataset_lig, predset, config, log_dir = 'g
                 wcdist = np.array([[999.99]])
                 wpdist = np.array([[999.99]])
                 wwdist = np.array([[999.99]])
+                widist = np.array([[999.99]])
                 print("no crystallographic water")
             else:
                 if carbon_pos_list.shape[0] == 0:
@@ -1549,6 +1546,12 @@ def analysis_water_S8(model, dataset, dataset_lig, predset, config, log_dir = 'g
                     print("no probe eligible atoms")
                 else:
                     wpdist = cdist(water_pos_list, polar_pos_list)
+                    
+                if pos_list.shape[0] == 0:
+                    widist = np.array([[999.9] for i in range(water_pos_list.shape[0])])
+                    print("no input atom")
+                else:
+                    widist = cdist(water_pos_list, pos_list)    
 
                 wwdist = cdist(water_pos_list, water_pos_list)
         
@@ -1565,7 +1568,8 @@ def analysis_water_S8(model, dataset, dataset_lig, predset, config, log_dir = 'g
             polar_mindist  = [ 999.99 for i in range(n_wat)] #minimum distance between polar atom and matching water
             polar_mindist_elig_pw   = [ 999.99 for i in range(n_wat)] #minimum distance between polar atom and matching water (p-w)
             polar_mindist_elig_ww   = [ 999.99 for i in range(n_wat)] #minimum distance between polar atom and matching water (w-w)
-
+            input_mindist  = [ 999.99 for i in range(n_wat)] #minimum distance between input atom and matching water
+            ww_mindist  = [ 999.99 for i in range(n_wat)] #minimum distance between polar atom and matching water
 
             wat_probeidx = [ [] for i in range(n_wat)] #probe idxs in each water
             wat_watidx   = [ [] for i in range(n_wat)] #water having h-bond with another water (use dist_cutoff)
@@ -1585,6 +1589,15 @@ def analysis_water_S8(model, dataset, dataset_lig, predset, config, log_dir = 'g
             #water-polar distance
             for i_wat in range(n_wat):
                 polar_mindist[i_wat] =  np.amin(wpdist[i_wat,:]) 
+                
+            #water-input distance
+            for i_wat in range(n_wat):
+                input_mindist[i_wat] =  np.amin(widist[i_wat,:]) 
+                
+            #water-water distance
+            for i_wat in range(n_wat):
+                wwdist[i_wat,i_wat] = 9999.99 # ignore self matching
+                ww_mindist[i_wat] =  np.amin(wwdist[i_wat,:]) 
 
             #assign water to probe (fill probe_watidx/ wat_probeidx)
             for i_wat in range(n_wat):
@@ -1664,9 +1677,13 @@ def analysis_water_S8(model, dataset, dataset_lig, predset, config, log_dir = 'g
                 N_polar_elig_pw_idx = max(0, min(100, int(polar_mindist_elig_pw[i_wat]/0.1) ))
                 N_polar_elig_ww_idx = max(0, min(100, int(polar_mindist_elig_ww[i_wat]/0.1) ))
                 N_carbon_idx = max(0, min(100, int(carbon_mindist[i_wat]/0.1) ))
-
+                N_input_idx = max(0, min(100, int(input_mindist[i_wat]/0.1) ))
+                N_water_idx = max(0, min(100, int(ww_mindist[i_wat]/0.1) ))
+                
                 N_polar_histogram[N_polar_idx] += 1 #minimum distance between polar atom and matching water
-
+                N_input_histogram[N_input_idx] += 1 #minimum distance between input atom and matching water
+                N_water_histogram[N_water_idx] += 1 #minimum distance between water and matching water
+                
                 if polar_mindist_elig_pw[i_wat] > config['water_cutoff']: #has no eligible pw probe
 
 
@@ -1700,24 +1717,34 @@ def analysis_water_S8(model, dataset, dataset_lig, predset, config, log_dir = 'g
    
         log_f.write('# of total water molecules in WatGNN training set: %12d\n'%N_total)
 
-        log_f.write('#histogram: minimum distance between polar atom and water molecule (ignore h-bond eligibility\n')
+        log_f.write('#histogram mindist_polar : minimum distance between polar atom and water molecule (ignore h-bond eligibility\n')
         for i in range(101):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_histogram[i], N_polar_histogram[i]/N_total ))
         log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_histogram[i], N_polar_histogram[i]/N_total ))
 
-        log_f.write('#histogram: minimum distance between eligible polar atom and water molecule (p-w)\n')
+        log_f.write('#histogram mindist_pw : minimum distance between eligible polar atom and water molecule (p-w)\n')
         for i in range(101):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_elig_pw_histogram[i], N_polar_elig_pw_histogram[i]/N_total ))
         log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_elig_pw_histogram[i], N_polar_elig_pw_histogram[i]/N_total ))
 
-        log_f.write('#histogram: minimum distance between eligible polar atom and water molecule (w-w, no p-w)\n')
+        log_f.write('#histogram mindist_ww : minimum distance between eligible polar atom and water molecule (w-w, no p-w)\n')
         for i in range(101):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_elig_ww_histogram[i], N_polar_elig_ww_histogram[i]/N_total ))
         log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_elig_ww_histogram[i], N_polar_elig_ww_histogram[i]/N_total ))
 
-        log_f.write('#histogram: minimum distance between carbon atom and water molecule (no p-w / w-w)\n')
+        log_f.write('#histogram mindist_cw : minimum distance between carbon atom and water molecule (no p-w / w-w)\n')
         for i in range(101):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_carbon_histogram[i], N_carbon_histogram[i]/N_total ))
         log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_carbon_histogram[i], N_carbon_histogram[i]/N_total ))
 
+        log_f.write('#histogram mindist_iw : minimum distance between input atom and water molecule \n')
+        for i in range(101):
+            log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_input_histogram[i], N_input_histogram[i]/N_total ))
+        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_input_histogram[i], N_input_histogram[i]/N_total ))
+
+        log_f.write('#histogram mindist_water : minimum distance between water molecule and another water molecule \n')
+        for i in range(101):
+            log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_water_histogram[i], N_water_histogram[i]/N_total ))
+        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_water_histogram[i], N_water_histogram[i]/N_total ))
+        
         log_f.close()

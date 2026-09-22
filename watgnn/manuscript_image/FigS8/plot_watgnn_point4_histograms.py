@@ -1,33 +1,4 @@
-
 #!/usr/bin/env python3
-"""
-plot_watgnn_point3_histograms.py
-
-Parse WatGNN histogram text files of the form:
-
-#histogram: <description>
- 0.00A - 0.10A : 123 0.001
- ...
-
-and generate publication-ready matplotlib figures.
-
-Usage:
-    python plot_watgnn_point3_histograms.py gnn_revision_point3_test.txt
-
-Outputs:
-    - one PNG and one PDF per histogram section
-    - a CSV summary of section totals
-    - an optional assignment-summary figure for sections containing
-      "(p-w)", "(w-w, no p-w)", and "(no p-w / w-w)"
-
-Notes:
-    * The program uses the supplied "portion" column as the fraction of the
-      total crystallographic-water population and plots it as percentage.
-    * The final "inf" bin is excluded from distance plots because it has no
-      finite bin width, but its count remains in the summary CSV.
-    * No custom color palette is imposed; matplotlib defaults are used.
-"""
-
 from pathlib import Path
 import argparse
 import re
@@ -59,11 +30,11 @@ def parse_histogram_file(path):
                 if m:
                     total_water = int(m.group(1))
 
-            if line.startswith("#histogram:"):
+            if line.startswith("#histogram"):
                 if current is not None:
                     sections.append(current)
                 current = {
-                    "label": line.split(":", 1)[1].strip(),
+                    "label": line.split(":")[0].strip(),
                     "rows": []
                 }
                 continue
@@ -95,13 +66,13 @@ def parse_histogram_file(path):
 
 def short_name(label):
     ll = label.lower()
-    if "ignore h-bond eligibility" in ll:
+    if "mindist_polar" in ll:
         return "all_polar"
-    if "(p-w)" in ll:
+    if "mindist_pw" in ll:
         return "pw_assignable"
-    if "(w-w, no p-w)" in ll:
+    if "mindist_ww" in ll:
         return "ww_assignable"
-    if "(no p-w / w-w)" in ll:
+    if "mindist_cw" in ll:
         return "unassigned_carbon"
     return re.sub(r"[^a-z0-9]+", "_", ll).strip("_")[:60]
 
@@ -120,7 +91,7 @@ def main():
     for i in range(len(sections_cryst)):
 
         label = sections_cryst[i]["label"].lower()
-        if 'ignore h-bond eligibility' not in label:
+        if "mindist_polar" not in label:
             continue
 
         section_cryst = sections_cryst[i]   
