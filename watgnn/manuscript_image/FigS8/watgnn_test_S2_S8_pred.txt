@@ -100,7 +100,6 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.70A -  9.80A :            0    0.000
  9.80A -  9.90A :            0    0.000
  9.90A - 10.00A :            0    0.000
-10.00A - 10.10A :            0    0.000
 10.00A - inf    :            0    0.000
 #histogram mindist_pw : minimum distance between eligible polar atom and water molecule (p-w)
  0.00A -  0.10A :            0    0.000
@@ -203,7 +202,6 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.70A -  9.80A :            0    0.000
  9.80A -  9.90A :            0    0.000
  9.90A - 10.00A :            0    0.000
-10.00A - 10.10A :            0    0.000
 10.00A - inf    :            0    0.000
 #histogram mindist_ww : minimum distance between eligible polar atom and water molecule (w-w, no p-w)
  0.00A -  0.10A :            0    0.000
@@ -306,7 +304,6 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.70A -  9.80A :            0    0.000
  9.80A -  9.90A :            0    0.000
  9.90A - 10.00A :            0    0.000
-10.00A - 10.10A :            0    0.000
 10.00A - inf    :            0    0.000
 #histogram mindist_cw : minimum distance between carbon atom and water molecule (no p-w / w-w)
  0.00A -  0.10A :            0    0.000
@@ -409,7 +406,6 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.70A -  9.80A :            0    0.000
  9.80A -  9.90A :            0    0.000
  9.90A - 10.00A :            0    0.000
-10.00A - 10.10A :            0    0.000
 10.00A - inf    :            0    0.000
 #histogram mindist_iw : minimum distance between input atom and water molecule 
  0.00A -  0.10A :            0    0.000
@@ -512,7 +508,6 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.70A -  9.80A :            0    0.000
  9.80A -  9.90A :            0    0.000
  9.90A - 10.00A :            0    0.000
-10.00A - 10.10A :            0    0.000
 10.00A - inf    :            0    0.000
 #histogram mindist_water : minimum distance between water molecule and another water molecule 
  0.00A -  0.10A :            0    0.000
@@ -615,5 +610,4 @@ hydrogen bond examination# of total water molecules in WatGNN training set:     
  9.70A -  9.80A :           52    0.000
  9.80A -  9.90A :           43    0.000
  9.90A - 10.00A :           34    0.000
-10.00A - 10.10A :          526    0.001
 10.00A - inf    :          526    0.001

@@ -240,7 +240,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 pred_filt_torch = torch.from_numpy(np.array(pred_filt))
                 n_max_water = min(pred_filt_torch.shape[0], 30000) 
                 print('n_max_water: ',pred_filt_torch.shape[0], 30000)
-                clust_indice = [ i for i in range(len(pred_filt))]
+                clust_indice = [ i for i in range(n_max_water)]
                 removed_indice = []
 
                 try:

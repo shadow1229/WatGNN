@@ -244,7 +244,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 pred_filt_torch = torch.from_numpy(np.array(pred_filt))
                 n_max_water = min(pred_filt_torch.shape[0], 30000) 
                 print('n_max_water: ',pred_filt_torch.shape[0], 30000)
-                clust_indice = [ i for i in range(len(pred_filt))]
+                clust_indice = [ i for i in range(n_max_water)]
                 removed_indice = []
 
                 try:
@@ -1325,7 +1325,7 @@ def analysis_water_S2(model, dataset, dataset_lig, predset, config, log_dir = 'g
             #    atmno += 1
             #    wat_pred_f.write(txt)
    
-        log_f.write('# of total water molecules in WatGNN training set: %12d\n'%N_total)
+        log_f.write('# of total water molecules in the set: %12d\n'%N_total)
 
         log_f.write('#histogram mindist_polar : minimum distance between polar atom and water molecule (ignore h-bond eligibility\n')
         for i in range(100):
@@ -1715,36 +1715,36 @@ def analysis_water_S8(model, dataset, dataset_lig, predset, config, log_dir = 'g
             #    atmno += 1
             #    wat_pred_f.write(txt)
    
-        log_f.write('# of total water molecules in WatGNN training set: %12d\n'%N_total)
+        log_f.write('# of total water molecules in the set: %12d\n'%N_total)
 
         log_f.write('#histogram mindist_polar : minimum distance between polar atom and water molecule (ignore h-bond eligibility\n')
-        for i in range(101):
+        for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_histogram[i], N_polar_histogram[i]/N_total ))
-        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_histogram[i], N_polar_histogram[i]/N_total ))
+        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_histogram[100], N_polar_histogram[100]/N_total ))
 
         log_f.write('#histogram mindist_pw : minimum distance between eligible polar atom and water molecule (p-w)\n')
-        for i in range(101):
+        for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_elig_pw_histogram[i], N_polar_elig_pw_histogram[i]/N_total ))
-        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_elig_pw_histogram[i], N_polar_elig_pw_histogram[i]/N_total ))
+        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_elig_pw_histogram[100], N_polar_elig_pw_histogram[100]/N_total ))
 
         log_f.write('#histogram mindist_ww : minimum distance between eligible polar atom and water molecule (w-w, no p-w)\n')
-        for i in range(101):
+        for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_polar_elig_ww_histogram[i], N_polar_elig_ww_histogram[i]/N_total ))
-        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_elig_ww_histogram[i], N_polar_elig_ww_histogram[i]/N_total ))
+        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_polar_elig_ww_histogram[100], N_polar_elig_ww_histogram[100]/N_total ))
 
         log_f.write('#histogram mindist_cw : minimum distance between carbon atom and water molecule (no p-w / w-w)\n')
-        for i in range(101):
+        for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_carbon_histogram[i], N_carbon_histogram[i]/N_total ))
-        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_carbon_histogram[i], N_carbon_histogram[i]/N_total ))
+        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_carbon_histogram[100], N_carbon_histogram[100]/N_total ))
 
         log_f.write('#histogram mindist_iw : minimum distance between input atom and water molecule \n')
-        for i in range(101):
+        for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_input_histogram[i], N_input_histogram[i]/N_total ))
-        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_input_histogram[i], N_input_histogram[i]/N_total ))
+        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_input_histogram[100], N_input_histogram[100]/N_total ))
 
         log_f.write('#histogram mindist_water : minimum distance between water molecule and another water molecule \n')
-        for i in range(101):
+        for i in range(100):
             log_f.write ("%5.2fA - %5.2fA : %12d %8.3f\n"%(i*0.1 , (i+1)*0.1, N_water_histogram[i], N_water_histogram[i]/N_total ))
-        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_water_histogram[i], N_water_histogram[i]/N_total ))
+        log_f.write ("%5.2fA - inf    : %12d %8.3f\n"%(100*0.1 , N_water_histogram[100], N_water_histogram[100]/N_total ))
         
         log_f.close()

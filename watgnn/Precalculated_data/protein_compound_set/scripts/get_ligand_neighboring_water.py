@@ -1,5 +1,5 @@
 import math
-import os,sys,copy,shutil
+import os,sys,copy
 import numpy as np
 from scipy.spatial.distance import cdist
 MAX_DIST = 10.0
@@ -178,6 +178,11 @@ def getligand2(fpath):
     return result
 
 def get_lig_pckt(in_path,out_path_prefix,pdbpath,ligpath,ang_cut = 100.,dist_cut=4.0):
+    #ds_list = ['Br'   , 'C.2', 'C.3' , 'C.ar' , 
+    #           'C.cat', 'Cl' , 'F'   , 'I'    , 
+    #           'Met'  , 'N.3', 'N.am', 'N.ar' , 
+    #           'N.pl3', 'O.2', 'O.3' , 'O.co2', 
+    #           'P.3'  , 'S.3', 'all']
     ds_list = ['all']
     cos_cut = np.cos(ang_cut * np.pi / 180.)
     #prints water having h-bonding N/O ligand atom -> all
@@ -341,7 +346,7 @@ def get_idxs(fpath):
                 continue
             lsp = line.split() 
             idx = lsp[0]
-            result.append(idx.lower())
+            result.append(idx)
     return result
 def get_npred(cuts,scores):
     if scores[0] == None:
@@ -380,7 +385,10 @@ def run(env):
     if cutv_mode not in ['res','ncryst','score']:
         raise ValueError
     
+
+    
     nowater = [] 
+    #excluded =['3nik','4fxq','4riu','6g14']
     excluded = []
     logf = open(log_path,'w')
 
@@ -406,11 +414,15 @@ def run(env):
     logf.write('\n')
     for id0_ind, id0 in enumerate(idxs):
 
+        #print (id0)
+        #cryst_path ='vec_result/%s/%s/%s_cov.pdb'%(tt,ans_dir,id0)
+        #cryst_path ='pdb/%s/%s.pdb'%(ans_dir,id0)
         if cutv_mode == 'res':
             ires = dict_ires[id0]
         else:
             ires = -1
-        cryst_path = ans_matrix[id0_ind]   
+        cryst_path = ans_matrix[id0_ind]
+        #debug - 210204    
         if id0 in excluded:
             continue
         cryst,score_cryst =  read_pdb(cryst_path,cutoff_max=40.0) #list of vectors
@@ -419,6 +431,7 @@ def run(env):
             if id0 not in excluded:
                 excluded.append(id0)
             nowater.append('%s_%s'%(tt,id0) )
+            #print(tt,id0, 'crystal - no water near ligand')
             continue
         n_trg += 1.0
 
@@ -485,12 +498,18 @@ def run(env):
         logf.write("%s %s %8s %8s %8s %8.3f %8.3f"%('summary', cutv_mode, '-', '-','-', prop_sum[i]/n_trg, rmsd_sum[i]/n_trg))
         for j,cutoff in enumerate(cutoff_list):
             logf.write(" %8.3f"%(cov_sum[j][i]/n_trg))
+            #logf.write(" %8.3f"%(100.0* hit_sum[j][i] / (float(n_cryst_sum))) )
         for j,cutoff in enumerate(cutoff_list):
             logf.write(" %8.3f"%(acc_sum[j][i]/n_trg))
+            #if n_pred_sum[i] < 1:
+            #    logf.write(" %8.3f"%0.0 )
+            #else:
+            #    logf.write(" %8.3f"%(100.0* hit_sum[j][i] / (float(n_pred_sum[i]))) )
         logf.write('\n')          
 
     logf.close()
-
+    #for ex in excluded:
+    #    print(ex)
 def get_ligidxs():
     path = 'INDEX_refined_set.2019'
     f = open(path,'r')
@@ -509,31 +528,73 @@ def main(start, num):
     run_range = range(start,start+num)
     n_dl = 1
     cutoff_list = [0.5,1.0,1.5,2.0]
-    testidxs   = get_idxs(fpath='./pdbbind_exclude30.txt')    
+    #cutv_list = [40.,42.,44.,46.,48.,50.]
+    #cutv_list = [19,17,15,13,11,9,7,5] #wkgb
+    #trainidxs = get_ligidxs()
+    #trainidxs  = get_idxs(fpath='./train_pdbbind.txt')
+    testidxs   = get_idxs(fpath='./test_pdbbind.txt')
+    cutv_list  = [0.2*i for i in range(1,51)]
+    cutv_mode  = "res" #"score" / "ncryst"
+
+    pdbbind_dir = './pdbbind/refined-set'
+    #'gnn_result_pdbbind_max_30000_sorted',
+    #'gnn_result_pdbbind_max_30000_sorted_old',
+    prefixs = [
+    #'lig_lig_50',
+    #'lig_nofg_lig_50',
+    #'3drism_50',
+
+    #'gnn_result_ablation_150_sorted',
+    'gnn_result_revision_260922_noclash_pdbbind_sorted'
+
+    ]
     
-    cutv_list  = [0.5*i for i in range(1,51)]
-    cutv_mode  = "ncryst" 
-    
-    pdbbind_dir = 'ref'    
-    prefixs = ['WatGNN','GalaxyWater-CNN','3D-RISM']
+    #ds_list = ['Br'   , 'C.2', 'C.3' , 'C.ar' , 
+    #           'C.cat', 'Cl' , 'F'   , 'I'    , 
+    #           'Met'  , 'N.3', 'N.am', 'N.ar' , 
+    #           'N.pl3', 'O.2', 'O.3' , 'O.co2', 
+    #           'P.3'  , 'S.3', 'all']
     ds_list = ['all']
     
     for pref_i, prefix in enumerate(prefixs):
         if pref_i not in run_range:
             continue
 
-        pp = prefixs[pref_i]
-        prd_dir = '%s'%prefixs[pref_i]
-        if prefix == 'WatGNN':    
-            prd_test  = [ './%s/%s_wat_lig_all.pdb'%(prd_dir,id0)  for id0 in testidxs ]
-        else:
-            prd_test  = [ './%s/%s.pdb'%(prd_dir,id0)  for id0 in testidxs ]            
-        ans_test  = ['./%s/%s_water.pdb'%(pdbbind_dir,id0) for id0 in testidxs]
+        #for trg in trainidxs:
+        #    in_path = '%s/%s.pdb'%(prefix,trg)
+        #    pdbpath = '%s/%s/%s_protein.pdb'%(pdbbind_dir,trg,trg)
+        #    ligpath = '%s/%s/%s_ligand.mol2'%(pdbbind_dir,trg,trg)
+        #    out_path_prefix = '%s/%s_wat_lig'%(prefix,trg)
+        #    get_lig_pckt(in_path,out_path_prefix,pdbpath,ligpath,ang_cut = 90.,dist_cut=5.0)
 
-        env_test = { 'cutoff_list':cutoff_list, 
-                     'ans':ans_test, 'idxs':testidxs, 'prd':prd_test,
-                     'prefix':'%s'%(prefix), 'train':False, "cutv_mode":cutv_mode, "cutv_list":cutv_list,'log':'%s_test.log'%(prefix)}
-        run(env_test)
+        for trg in testidxs:
+            in_path = '%s/%s.pdb'%(prefix,trg)
+            pdbpath = '%s/%s/%s_protein.pdb'%(pdbbind_dir,trg,trg)
+            ligpath = '%s/%s/%s_ligand.mol2'%(pdbbind_dir,trg,trg)
+            out_path_prefix = '%s/%s_wat_lig'%(prefix,trg)
+            get_lig_pckt(in_path,out_path_prefix,pdbpath,ligpath,ang_cut = 90.,dist_cut=5.0)
+
+
+    
+        #print (pref_i)
+        for i in range(len(ds_list)):
+            pp = prefixs[pref_i]
+            prd_dir = '%s'%prefixs[pref_i]
+            
+            #prd_train = [ './%s/%s_wat_lig_%s.pdb'%(prd_dir,id0,ds_list[i])  for id0 in trainidxs ]
+            prd_test  = [ './%s/%s_wat_lig_%s.pdb'%(prd_dir,id0,ds_list[i])  for id0 in testidxs ] #due to every trg is predicted in train folder
+            #ans_train = ['%s/%s/%s_wat_lig_%s.pdb'%(pdbbind_dir,id0,id0,ds_list[i]) for id0 in trainidxs]
+            ans_test  = ['%s/%s/%s_wat_lig_%s.pdb'%(pdbbind_dir,id0,id0,ds_list[i]) for id0 in testidxs]
+
+            #ans_matrix_test = [ '/home/sonic1229/pdbbind/refined-set/%s/%s_full_wat.pdb'%(id0,id0)  for id0 in testidxs ]
+            #env_train = { 'cutoff_list':cutoff_list, 
+            #        'ans':ans_train, 'idxs':trainidxs, 'prd':prd_train,
+            #        'prefix':'%s_%s'%(prefix,ds_list[i]), 'train':True, "cutv_mode":cutv_mode, "cutv_list":cutv_list,'log':'%s_%s_train.log'%(prefix,ds_list[i])}
+            env_test = { 'cutoff_list':cutoff_list, 
+                    'ans':ans_test, 'idxs':testidxs, 'prd':prd_test,
+                    'prefix':'%s_%s'%(prefix,ds_list[i]), 'train':False, "cutv_mode":cutv_mode, "cutv_list":cutv_list,'log':'%s_%s_test.log'%(prefix,ds_list[i])}
+            #run(env_train)
+            run(env_test)
 
 if __name__ == "__main__":
     try:
