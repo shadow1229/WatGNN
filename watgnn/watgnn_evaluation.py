@@ -55,10 +55,7 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
     model.eval()
 
     is_ligand = False
-    if dataset_lig == None:
-        is_ligand = False
-    else:
-        is_ligand = True
+    ligand_path = None
     debug_global_data = {}
     with torch.no_grad():
         for trgidx, pdbpath_chain in enumerate(dataset):
@@ -68,15 +65,15 @@ def eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_p
                 outf_name = '%s/%s_pred.pdb'%(result_pdb_dir,pdb_name)
             else:
                 outf_name = '%s/%s_%s_pred.pdb'%(result_pdb_dir,pdb_name,pdbpath_chain[1])
-            if os.access(outf_name,0):
-                continue
+            #if os.access(outf_name,0):
+            #    continue
                 
-            if dataset_lig[trgidx] == None:
-                is_ligand = None
+            ligand_path = None if dataset_lig is None else dataset_lig[trgidx]
+            is_ligand = ligand_path is not None
             
             read_time_start = time.time()
             if is_ligand:
-                pdb_dict = read_paths([pdbpath_chain,dataset_lig[trgidx]],water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, is_eval=True) 
+                pdb_dict = read_paths([pdbpath_chain,ligand_path],water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, is_eval=True) 
 
             else:
                 pdb_dict = read_paths([pdbpath_chain],water_cutoff = water_cutoff, grid_start=grid_start, interval=interval, n_grid=n_grid, is_eval=True) 
