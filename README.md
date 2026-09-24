@@ -10,9 +10,12 @@ Water position prediction method with SE(3)-Graph Neural Network
 [a modified SE3Transformer](https://github.com/shadow1229/SE3Transformer)  
 [psutil](https://pypi.org/project/psutil/)  
 
-#### Installation
+#### Installation (Uses Anaconda)
 ```bash
-pip install git+http://github.com/shadow1229/WatGNN
+conda env create -f environment.yml -n watgnn
+conda activate watgnn
+conda list mkl
+python -c "import torch, dgl; print(torch.__version__, torch.version.cuda, dgl.__version__)"
 ```
 
 ## Usages

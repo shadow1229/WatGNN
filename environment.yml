@@ -5,6 +5,7 @@ channels:
   - defaults
 dependencies:
   - python=3.12
+   - mkl=2023.1.0
   - pip
   - git
   - pytorch::pytorch=2.4.0
