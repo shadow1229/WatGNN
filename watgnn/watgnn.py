@@ -73,8 +73,6 @@ def runner(mode='train',dataset_path=None): #pred_per_atom -> n_grid
             dataset.append([lsp[0],None])
             dataset_lig.append(lsp[1])
 
-
-
     gwgnn_dir = os.path.dirname(__file__)
     curr_dir = os.getcwd()
     os.chdir(gwgnn_dir)
