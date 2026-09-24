@@ -78,15 +78,13 @@ def runner(mode='train',dataset_path=None): #pred_per_atom -> n_grid
     gwgnn_dir = os.path.dirname(__file__)
     curr_dir = os.getcwd()
     os.chdir(gwgnn_dir)
-    state_dicts = glob.glob('%s/*.dict'%state_dict_dir)
-    state_dicts.sort()
-    if len(state_dicts) > 0:
-        start_epoch = int(state_dicts[-1].split('/')[-1].split('.')[0].split('_')[-1])
+    try:
+        state_dict = '%s/epoch_00150.dict'%state_dict_dir
         model.load_state_dict(torch.load(state_dicts[-1]))
-        #torchviz - make_dot (show gradient graph)
-    else:
-        start_epoch = 0
-    print('start epoch: ',start_epoch)
+        print('start epoch: ',start_epoch)
+    except:
+        print('model could not loaded properly.')
+        raise FileNotFoundError
     os.chdir(curr_dir)
 
     if mode == 'train':
