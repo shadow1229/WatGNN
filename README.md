@@ -32,8 +32,9 @@ example:
 ```
 
 ## Dataset used in the preprint
-[check here](https://github.com/shadow1229/WatGNN/tree/main/watgnn/Dataset)
-
+Now the dataset and precalculated data is located at the differet Repository, [https://github.com/shadow1229/WatGNN_SI/](https://github.com/shadow1229/WatGNN_SI/)
+Dataset: [check here](https://github.com/shadow1229/WatGNN_SI/tree/main/watgnn/Dataset)
+Precalculated data: [check here](https://github.com/shadow1229/WatGNN_SI/tree/main/Precalculated_data)
 ## Reference
 Sangwoo Park, "Water position prediction with SE(3)-Graph Neural Network", _bioRxiv_ (**2024**). [Link](https://www.biorxiv.org/content/10.1101/2024.03.25.586555v1)
 
