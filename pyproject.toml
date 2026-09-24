@@ -18,7 +18,7 @@ se3-transformer = {git = "https://github.com/shadow1229/SE3Transformer"}
 numpy = "^1.26.4"
 dgl = ">=0.9"
 scipy = "^1.13.0"
-torch = {version = "2.4.0", channel = "pytorch"}
+#torch = {version = "2.4.0", channel = "pytorch"}
 #torchvision = {version = "0.19.0", channel = "pytorch"}
 #torchaudio = {version = "2.4.0" , channel = "pytorch"}
 #pytorch-cuda = {version = "12.1", channel = "pytorch"}
