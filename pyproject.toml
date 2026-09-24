@@ -13,7 +13,7 @@ exclude = ["watgnn/Preprint*","watgnn/Dataset*"]
 watgnn = "watgnn.watgnn:main"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "3.12"
 se3-transformer = {git = "https://github.com/shadow1229/SE3Transformer"}
 numpy = "^1.26.4"
 dgl = ">=0.9"
