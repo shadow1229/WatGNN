@@ -12,7 +12,9 @@ WatGNN predicts water positions around proteins and protein–compound complexes
 
 ### For Linux/NVIDIA (Recommended)
 Due to DGL's supported python and pytorch version issue, this method will install Python 3.12, PyTorch 2.4.0, and cuda 12.1.
+
 This method was tested on Ubuntu 22.09 with Intel i9-12900k CPU and NVIDIA RTX 4090.
+
 ```bash
 conda env create -f environment.yml -n watgnn
 conda activate watgnn
@@ -26,8 +28,11 @@ Please install Windows Subsystem for Linux[https://learn.microsoft.com/en-us/win
 
 ### For MacOS (Will be installed, but not recommended)
 WARNING: Following installation will use CPU for the prediction.
+
 This method will install Python 3.11 and PyTorch 2.1.1.
+
 Tested on MacBook Air 2020 (Apple M1 + 16GB DRAM)
+
 ```bash
 #use MacOS version of pyproject.toml instead of default toml file.
 mv pyproject_macos.toml pyproject.toml
