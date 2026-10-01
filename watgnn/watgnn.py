@@ -76,9 +76,11 @@ def runner(mode='train',dataset_path=None): #pred_per_atom -> n_grid
     gwgnn_dir = os.path.dirname(__file__)
     curr_dir = os.getcwd()
     os.chdir(gwgnn_dir)
+    start_epoch = 0
     try:
         state_dict = '%s/epoch_00150.dict'%state_dict_dir
-        model.load_state_dict(torch.load(state_dicts[-1]))
+        start_epoch = int(state_dict.split("/")[-1].split(".")[0].split("_")[-1]) #150
+        model.load_state_dict(torch.load(state_dict, map_location=torch.device(device))) #FIXED!!
         print('start epoch: ',start_epoch)
     except:
         print('model could not loaded properly.')
@@ -206,7 +208,7 @@ def runner(mode='train',dataset_path=None): #pred_per_atom -> n_grid
 
     elif mode == 'eval':
         if len(dataset) > 0:
-            eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_path = 'gnn_train_epoch%05d.txt'%(start_epoch+1), result_pdb_dir = 'gnn_result',label='train' )
+            eval_dataset(model, dataset, dataset_lig, config, log_dir = 'gnn_log', log_path = 'gnn_eval_epoch%05d.txt'%(start_epoch+1), result_pdb_dir = 'gnn_result',label='eval' )
 
 def main():
     if len(sys.argv) <= 1:

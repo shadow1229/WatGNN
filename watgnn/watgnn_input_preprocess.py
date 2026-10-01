@@ -94,7 +94,15 @@ def partition_pdb_dict(pdb_dict, max_atom=2500, no_partition = 5000): #split pdb
         #4. make protein-water distance matrix
         #To prevent possible loss of far-water ~ protein atom pair, 
         # building distance matrix was done before adding gaussian noise to protein atom positions.
-        dist0 = [cdist(pos_list_new[k], water_pos_new) for k in range(n_partitions)]
+        dist0 = [None for k in range(n_partitions)] 
+        for k in range(n_partitions):
+            if len(pos_list_new[k].shape) == 1: # pos_list_new[k].shape = [0]
+                dist0[k] = np.array([[999.999]])
+            elif len(water_pos_new.shape) == 1: # water_pos_new.shape = [0]
+                dist0[k] = np.array([ [999.999] for _ in range(pos_list_new[k].shape[0]) ])
+            else:
+                dist0[k] = cdist(pos_list_new[k], water_pos_new)
+
         for k in range(n_partitions):
             for i in range(polar_mask_list_new[k].shape[0]):
                 if polar_mask_list_new[k][i] != 1:
