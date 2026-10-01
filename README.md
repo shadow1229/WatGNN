@@ -16,8 +16,10 @@ This method was tested on Ubuntu 22.09 with Intel i9-12900k CPU and NVIDIA RTX 4
 ```bash
 conda env create -f environment.yml -n watgnn
 conda activate watgnn
+python -m pip install -e .
+
+#module import test
 conda list mkl
-#for module import test
 python -c "import torch, dgl; print(torch.__version__, torch.version.cuda, dgl.__version__)"
 ```
 
@@ -40,7 +42,8 @@ conda activate watgnn-macos
 
 python -m pip install "numpy==1.26.4" "torch==2.1.1" "torchdata==0.7.1" "dgl==2.2.0"
 python -m pip install -e .
-#for module import test
+
+#module import test
 python -c "import torch, torchdata.datapipes.iter, dgl; print(torch.__version__, dgl.__version__)"
 ```
 
