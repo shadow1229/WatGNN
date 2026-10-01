@@ -1,0 +1,1 @@
+./protein_compound_structures/1d2e_protein.pdb ./protein_compound_structures/1d2e_ligand.mol2

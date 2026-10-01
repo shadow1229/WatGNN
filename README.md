@@ -22,7 +22,7 @@ python -c "import torch, dgl; print(torch.__version__, torch.version.cuda, dgl._
 ```
 
 ### For Windows/NVIDIA
-Please install Windows Subsystem for Linux[https://learn.microsoft.com/en-us/windows/wsl/install] (WSL) on windows and follow Linux/NVIDIA Installation method.
+Please install [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install) (WSL) on windows and follow Linux/NVIDIA Installation method.
 
 ### For MacOS (Will be installed, but not recommended)
 WARNING: Following installation will use CPU for the prediction.
@@ -47,23 +47,40 @@ python -c "import torch, torchdata.datapipes.iter, dgl; print(torch.__version__,
 ## Usages
 ```bash
 usage: watgnn.py [dataset file path] 
+
+example 1): watgnn.py single_protein_example.txt
+example 2): watgnn.py protein_compound_example.txt
 ```
 
-#### dataset file structure
+### dataset file structure
 for each line:
-(Input PDB/CIF file path) (Input mol2 file path(optional))
+[Input PDB/CIF file path] [Input mol2 file path(optional, for protein-compound complex)]
 
 example:
+
+1) single_protein_example.txt:
 ```bash
-./1adl.pdb ./1adl.mol2
-./1ubq.pdb
-./2fwh.pdb ./2fwh.mol2
+./single_protein_structures/1byi_A.pdb
 ```
+
+2) protein_compound_example.txt
+```bash
+./protein_compound_structures/1d2e_protein.pdb ./protein_compound_structures/1d2e_ligand.mol2
+```
+
+## Config file (watgnn/watgnn_config.py) for prediction
+'score_cutoff' (default: 0.65, [0,1]) : sets score cutoff of each predicted site
+'clust_radius' (default: 2.0 (angstrom) ) : sets prediction exclusion radius from input atoms and other predicted water sites.
+
+## Predicted water sites
+The predicted water sites will be saved as ./gnn_result/[input protein file name]_pred.pdb, with PDB file format.
+The B-factor column will have 100 * predicted score.
 
 ## Dataset used in the preprint
 Now the dataset and precalculated data is located at the differet Repository, [https://github.com/shadow1229/WatGNN_SI/](https://github.com/shadow1229/WatGNN_SI/)
 Dataset: [check here](https://github.com/shadow1229/WatGNN_SI/tree/main/Dataset)
 Precalculated data: [check here](https://github.com/shadow1229/WatGNN_SI/tree/main/Precalculated_data)
+
 ## Reference
 Sangwoo Park, "Water position prediction with SE(3)-Graph Neural Network", _bioRxiv_ (**2024**). [Link](https://www.biorxiv.org/content/10.1101/2024.03.25.586555v1)
 
