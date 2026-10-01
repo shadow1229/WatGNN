@@ -25,8 +25,7 @@ config = {
              'grid_start':-4.5,  #start point of grid (-4.5A from atom crd)
              'interval':4.5,     #grid interval 
              'water_cutoff':4.5,
-             #'score_cutoff':0.5,
-             'score_cutoff':0.1,
+             'score_cutoff':0.65,
              'n_grid':2,         #maximum number of grid 
              'device':device,
              'shuffle':True, #enables shuffle for training 
