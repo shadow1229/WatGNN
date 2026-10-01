@@ -8,20 +8,37 @@ Water position prediction method with SE(3)-Graph Neural Network
 WatGNN predicts water positions around proteins and protein–compound complexes. This method places four probe points near each eligible noncarbon atom, then uses an SE(3)-equivariant graph neural network to score possible water sites and predict three-dimensional shifts from those probe points. The shifted positions are filtered by score, and predictions might have steric clash with input atoms or another duplicate predictions are removed.
 
 
-## Required Library
-[NumPy](https://numpy.org/)  
-[PyTorch](https://pytorch.org)  
-[SciPy](https://scipy.org/)  
-[DGL](https://www.dgl.ai/pages/start.html)  
-[a modified SE3Transformer](https://github.com/shadow1229/SE3Transformer)  
-[psutil](https://pypi.org/project/psutil/)  
+## Installation (Uses Anaconda)
 
-#### Installation (Uses Anaconda)
+### For Linux/NVIDIA (Recommended)
+Due to DGL's supported python and pytorch version issue, this method will install Python 3.12, PyTorch 2.4.0, and cuda 12.1.
+This method was tested on Ubuntu 22.09 with Intel i9-12900k CPU and NVIDIA RTX 4090.
 ```bash
 conda env create -f environment.yml -n watgnn
 conda activate watgnn
 conda list mkl
+#for module import test
 python -c "import torch, dgl; print(torch.__version__, torch.version.cuda, dgl.__version__)"
+```
+
+### For Windows/NVIDIA
+Please install Windows Subsystem for Linux[https://learn.microsoft.com/en-us/windows/wsl/install] (WSL) on windows and follow Linux/NVIDIA Installation method.
+
+### For MacOS (Will be installed, but not recommended)
+WARNING: Following installation will use CPU for the prediction.
+This method will install Python 3.11 and PyTorch 2.1.1.
+Tested on MacBook Air 2020 (Apple M1 + 16GB DRAM)
+```bash
+#use MacOS version of pyproject.toml instead of default toml file.
+mv pyproject_macos.toml pyproject.toml
+
+conda env create -f environment_macos.yml
+conda activate watgnn-macos
+
+python -m pip install "numpy==1.26.4" "torch==2.1.1" "torchdata==0.7.1" "dgl==2.2.0"
+python -m pip install -e .
+#for module import test
+python -c "import torch, torchdata.datapipes.iter, dgl; print(torch.__version__, dgl.__version__)"
 ```
 
 ## Usages
