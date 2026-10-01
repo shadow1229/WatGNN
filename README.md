@@ -70,15 +70,19 @@ example:
 
 ## Config file (watgnn/watgnn_config.py) for prediction
 'score_cutoff' (default: 0.65, [0,1]) : sets score cutoff of each predicted site
+
 'clust_radius' (default: 2.0 (angstrom) ) : sets prediction exclusion radius from input atoms and other predicted water sites.
 
 ## Predicted water sites
 The predicted water sites will be saved as ./gnn_result/[input protein file name]_pred.pdb, with PDB file format.
+
 The B-factor column will have 100 * predicted score.
 
 ## Dataset used in the preprint
 Now the dataset and precalculated data is located at the differet Repository, [https://github.com/shadow1229/WatGNN_SI/](https://github.com/shadow1229/WatGNN_SI/)
+
 Dataset: [check here](https://github.com/shadow1229/WatGNN_SI/tree/main/Dataset)
+
 Precalculated data: [check here](https://github.com/shadow1229/WatGNN_SI/tree/main/Precalculated_data)
 
 ## Reference
