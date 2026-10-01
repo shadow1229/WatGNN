@@ -1,6 +1,8 @@
 # WatGNN
 Water position prediction method with SE(3)-Graph Neural Network
 
+WatGNN predicts water positions around proteins and protein–compound complexes. This method places four probe points near each eligible noncarbon atom, then uses an SE(3)-equivariant graph neural network to score possible water sites and predict three-dimensional shifts from those probe points. The shifted positions are filtered by score, and predictions might have steric clash with input atoms or another duplicate predictions are removed.
+
 
 ## Required Library
 [NumPy](https://numpy.org/)  
