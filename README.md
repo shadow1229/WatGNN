@@ -48,6 +48,7 @@ python -c "import torch, torchdata.datapipes.iter, dgl; print(torch.__version__,
 ```
 
 ## Usages
+Go to watgnn directory where watgnn.py exists and,
 ```bash
 usage: watgnn.py [dataset file path] 
 
