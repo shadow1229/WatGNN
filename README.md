@@ -89,7 +89,7 @@ The predicted water sites will be saved as ```./gnn_result/[input protein file n
 
 Each HOH record in an output PDB represents a predicted water oxygen position. Its B-factor field stores ```100 × predicted site score``` but not an experimental crystallographic B-factor. 
 
-The occupancy field is written as ```0.00 ``` and should not be interpreted as a predicted water occupancy.
+The occupancy field is written as ```0.00``` and should not be interpreted as a predicted water occupancy.
 
 The protein–compound output contains predictions around the entire input complex. 
 
