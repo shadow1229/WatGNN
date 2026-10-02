@@ -68,12 +68,14 @@ for each line:
 example:
 
 1) single_protein_example.txt:
+
 The file single_protein_example.txt specifies the input structure ./single_protein_structures/1byi_A.pdb.
 ```bash
 ./single_protein_structures/1byi_A.pdb
 ```
 
-2) protein_compound_example.txt
+2) protein_compound_example.txt:
+
 The file protein_compound_example.txt specifies the protein structure ./protein_compound_structures/1d2e_protein.pdb and the ligand structure ./protein_compound_structures/1d2e_ligand.mol2. The ligand is supplied in the MOL2 file rather than duplicated in the protein PDB. Both files use the same coordinate frame.
 ```bash
 ./protein_compound_structures/1d2e_protein.pdb ./protein_compound_structures/1d2e_ligand.mol2
