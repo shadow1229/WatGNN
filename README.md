@@ -84,8 +84,8 @@ The B-factor column will have 100 * predicted score.
 
 Prediction example from the given single protein example and protein-compound example is located at ./WatGNN_result_examples .
 
-## Dataset used in the preprint
-Now the dataset and precalculated data is located at the differet Repository, [https://github.com/shadow1229/WatGNN_SI/](https://github.com/shadow1229/WatGNN_SI/)
+## Supplementary Information Archives (Including Datasets used in the preprint)
+Supplementary Information Archives is located at [https://github.com/shadow1229/WatGNN_SI/](https://github.com/shadow1229/WatGNN_SI/)
 
 Dataset: [check here](https://github.com/shadow1229/WatGNN_SI/tree/main/Dataset)
 
