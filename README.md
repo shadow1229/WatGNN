@@ -50,10 +50,10 @@ python -c "import torch, torchdata.datapipes.iter, dgl; print(torch.__version__,
 ## Usages
 Go to watgnn directory where watgnn.py exists and,
 ```bash
-usage: watgnn.py [dataset file path] 
+usage: python watgnn.py [dataset file path] 
 
-example 1): watgnn.py single_protein_example.txt
-example 2): watgnn.py protein_compound_example.txt
+example 1): python watgnn.py single_protein_example.txt
+example 2): python watgnn.py protein_compound_example.txt
 ```
 
 ### dataset file structure
