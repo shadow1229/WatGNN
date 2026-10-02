@@ -82,6 +82,8 @@ The predicted water sites will be saved as ./gnn_result/[input protein file name
 
 The B-factor column will have 100 * predicted score.
 
+Prediction example from the given single protein example and protein-compound example is located at ./WatGNN_result_examples .
+
 ## Dataset used in the preprint
 Now the dataset and precalculated data is located at the differet Repository, [https://github.com/shadow1229/WatGNN_SI/](https://github.com/shadow1229/WatGNN_SI/)
 
